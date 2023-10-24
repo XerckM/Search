@@ -1,3 +1,11 @@
+"""
+Group Members:
+
+    - Xerckiem Mercado
+
+"""
+
+
 # search.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -87,17 +95,83 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    stack = util.Stack()  # Initialize DFS stack
+    stack.push((problem.getStartState(), []))  # Push start state
+    visited = set()  # Track visited states
+
+    while not stack.isEmpty():  # While states remain
+        state, actions = stack.pop()  # Pop state
+
+        if state in visited:  # Skip visited states
+            continue
+
+        visited.add(state)  # Mark state as visited
+
+        if problem.isGoalState(state):  # Check for goal
+            return actions
+
+        for nextState, action, _ in problem.getSuccessors(state):  # Iterate successors
+            if nextState not in visited:  # Push unvisited successors
+                stack.push((nextState, actions + [action]))
+
+    return []  # Return empty list if no solution
 
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
+    """
+    Search the shallowest nodes in the search tree first.
+    """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    queue = util.Queue()  # Initialize BFS queue
+    queue.push((problem.getStartState(), []))  # Push start state
+    visited = set()  # Track visited states
+
+    while not queue.isEmpty():  # While states remain
+        state, actions = queue.pop()  # Dequeue state
+
+        if state in visited:  # Skip visited states
+            continue
+
+        visited.add(state)  # Mark state as visited
+
+        if problem.isGoalState(state):  # Check for goal
+            return actions
+
+        for nextState, action, _ in problem.getSuccessors(state):  # Iterate successors
+            if nextState not in visited:  # Enqueue unvisited successors
+                queue.push((nextState, actions + [action]))
+
+    return []  # Return empty list if no solution
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
+    """
+    Search the node of least total cost first.
+    """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Utilize the PriorityQueue data structure from util.py for UCS
+    pQueue = util.PriorityQueue()  # Initialize priority queue for UCS
+    pQueue.push((problem.getStartState(), []), 0)  # Push start state with 0 cost
+    visited = set()  # Track visited states
+    frontier = set()  # Track states in the priority queue
+
+    while not pQueue.isEmpty():  # While states remain
+        state, actions = pQueue.pop()  # Dequeue state based on cost
+
+        if state in visited:  # Skip visited states
+            continue
+
+        visited.add(state)  # Mark state as visited
+
+        if problem.isGoalState(state):  # Check for goal
+            return actions
+
+        for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
+            if nextState not in visited and nextState not in frontier:  # Push unvisited successors with updated cost
+                newCost = problem.getCostOfActions(actions + [action])
+                pQueue.push((nextState, actions + [action]), newCost)
+                frontier.add(nextState) # Add to frontier set
+
+    return []  # Return empty list if no solution
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -106,10 +180,34 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+def aStarSearch(problem, heuristic=util.manhattanDistance):
+    """
+    Search the node that has the lowest combined cost and heuristic first.
+    """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pQueue = util.PriorityQueue()  # Initialize priority queue for A*
+    pQueue.push((problem.getStartState(), []), 0)  # Push start state with 0 cost
+    visited = set()  # Track visited states
+    frontier = set()  # Track states in the priority queue
+
+    while not pQueue.isEmpty():  # While states remain
+        state, actions = pQueue.pop()  # Dequeue state based on cost + heuristic
+
+        if state in visited:  # Skip visited states
+            continue
+
+        visited.add(state)  # Mark state as visited
+
+        if problem.isGoalState(state):  # Check for goal
+            return actions
+
+        for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
+            if nextState not in visited and nextState not in frontier:  # Push unvisited successors with updated cost + heuristic
+                newCost = problem.getCostOfActions(actions + [action]) + heuristic(nextState, problem)
+                pQueue.push((nextState, actions + [action]), newCost)
+                frontier.add(nextState) # Add to frontier set
+
+    return []  # Return empty list if no solution
 
 
 # Abbreviations
