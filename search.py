@@ -182,34 +182,36 @@ def aStarSearch(problem, heuristic=util.manhattanDistance):
     """
     "*** YOUR CODE HERE ***"
     pQueue = util.PriorityQueue()  # Initialize priority queue for A*
-
     startState = problem.getStartState()
 
-    # Push start state with heuristic value (if applicable)
-    if isinstance(startState, tuple):  # If startState is a tuple (coordinates)
-        pQueue.push((startState, []), heuristic(startState, problem))
-    else:  # If startState is a node (string)
-        pQueue.push((startState, []), 0)  # Use heuristic value of 0 for nodes
+    # Determine heuristic value for start state
+    startHeuristic = heuristic(startState, problem) if isinstance(startState, tuple) else 0
+    pQueue.push((startState, []), startHeuristic)
 
     visited = set()  # Track visited states
+    costs = {startState: 0}  # Track the cost to reach each state
+    combinedCosts = {startState: startHeuristic}  # Track the combined cost for each state
 
     while not pQueue.isEmpty():  # While states remain
         state, actions = pQueue.pop()  # Dequeue state based on cost + heuristic
 
-        if problem.isGoalState(state):  # Check for goal
-            return actions
-
         if state in visited:  # Skip visited states
             continue
+
+        if problem.isGoalState(state):  # Check for goal
+            return actions
 
         visited.add(state)  # Mark state as visited
 
         for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
-            if nextState not in visited:  # Push unvisited successors with updated cost + heuristic
-                newCost = problem.getCostOfActions(actions + [action])
-                if isinstance(nextState, tuple):  # If nextState is a tuple (coordinates)
-                    newCost += heuristic(nextState, problem)
-                pQueue.push((nextState, actions + [action]), newCost)
+            newCost = costs[state] + cost
+            nextHeuristic = heuristic(nextState, problem) if isinstance(nextState, tuple) else 0
+            newCombinedCost = newCost + nextHeuristic
+
+            if nextState not in visited and (nextState not in combinedCosts or newCombinedCost < combinedCosts[nextState]):
+                costs[nextState] = newCost
+                combinedCosts[nextState] = newCombinedCost
+                pQueue.push((nextState, actions + [action]), newCombinedCost)
 
     return []  # Return empty list if no solution
 
