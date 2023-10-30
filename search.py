@@ -148,29 +148,25 @@ def uniformCostSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     # Utilize the PriorityQueue data structure from util.py for UCS
-    pQueue = util.PriorityQueue()  # Initialize priority queue for UCS
-    pQueue.push((problem.getStartState(), []), 0)  # Push start state with 0 cost
-    visited = set()  # Track visited states
-    frontier = set()  # Track states in the priority queue
+    pQueue = util.PriorityQueue()
+    pQueue.push((problem.getStartState(), []), 0)
+    visited = set()
 
-    while not pQueue.isEmpty():  # While states remain
-        state, actions = pQueue.pop()  # Dequeue state based on cost
+    while not pQueue.isEmpty():
+        currentNode, actions = pQueue.pop()
 
-        if state in visited:  # Skip visited states
-            continue
-
-        visited.add(state)  # Mark state as visited
-
-        if problem.isGoalState(state):  # Check for goal
+        if problem.isGoalState(currentNode):
             return actions
 
-        for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
-            if nextState not in visited and nextState not in frontier:  # Push unvisited successors with updated cost
-                newCost = problem.getCostOfActions(actions + [action])
-                pQueue.push((nextState, actions + [action]), newCost)
-                frontier.add(nextState) # Add to frontier set
+        if currentNode not in visited:
+            visited.add(currentNode)
 
-    return []  # Return empty list if no solution
+            for successor, action, stepCost in problem.getSuccessors(currentNode):
+                newActions = actions + [action]
+                newCost = problem.getCostOfActions(newActions)
+                pQueue.push((successor, newActions), newCost)
+
+    return []
 
 
 def nullHeuristic(state, problem=None):
@@ -186,26 +182,34 @@ def aStarSearch(problem, heuristic=util.manhattanDistance):
     """
     "*** YOUR CODE HERE ***"
     pQueue = util.PriorityQueue()  # Initialize priority queue for A*
-    pQueue.push((problem.getStartState(), []), 0)  # Push start state with 0 cost
+
+    startState = problem.getStartState()
+
+    # Push start state with heuristic value (if applicable)
+    if isinstance(startState, tuple):  # If startState is a tuple (coordinates)
+        pQueue.push((startState, []), heuristic(startState, problem))
+    else:  # If startState is a node (string)
+        pQueue.push((startState, []), 0)  # Use heuristic value of 0 for nodes
+
     visited = set()  # Track visited states
-    frontier = set()  # Track states in the priority queue
 
     while not pQueue.isEmpty():  # While states remain
         state, actions = pQueue.pop()  # Dequeue state based on cost + heuristic
+
+        if problem.isGoalState(state):  # Check for goal
+            return actions
 
         if state in visited:  # Skip visited states
             continue
 
         visited.add(state)  # Mark state as visited
 
-        if problem.isGoalState(state):  # Check for goal
-            return actions
-
         for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
-            if nextState not in visited and nextState not in frontier:  # Push unvisited successors with updated cost + heuristic
-                newCost = problem.getCostOfActions(actions + [action]) + heuristic(nextState, problem)
+            if nextState not in visited:  # Push unvisited successors with updated cost + heuristic
+                newCost = problem.getCostOfActions(actions + [action])
+                if isinstance(nextState, tuple):  # If nextState is a tuple (coordinates)
+                    newCost += heuristic(nextState, problem)
                 pQueue.push((nextState, actions + [action]), newCost)
-                frontier.add(nextState) # Add to frontier set
 
     return []  # Return empty list if no solution
 
