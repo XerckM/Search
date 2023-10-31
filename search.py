@@ -148,25 +148,25 @@ def uniformCostSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     # Utilize the PriorityQueue data structure from util.py for UCS
-    pQueue = util.PriorityQueue()
-    pQueue.push((problem.getStartState(), []), 0)
-    visited = set()
+    pQueue = util.PriorityQueue()  # Initialize priority queue for UCS
+    pQueue.push((problem.getStartState(), []), 0)  # Push start state with cost 0
+    visited = set()  # Track visited states
 
-    while not pQueue.isEmpty():
-        currentNode, actions = pQueue.pop()
+    while not pQueue.isEmpty():  # Continue while there are nodes in the queue
+        currentNode, actions = pQueue.pop()  # Dequeue node with least total cost
 
-        if problem.isGoalState(currentNode):
+        if problem.isGoalState(currentNode):  # Return actions if goal state is reached
             return actions
 
-        if currentNode not in visited:
-            visited.add(currentNode)
+        if currentNode not in visited:  # Process if node hasn't been visited
+            visited.add(currentNode)  # Mark node as visited
 
-            for successor, action, stepCost in problem.getSuccessors(currentNode):
-                newActions = actions + [action]
-                newCost = problem.getCostOfActions(newActions)
-                pQueue.push((successor, newActions), newCost)
+            for successor, action, stepCost in problem.getSuccessors(currentNode):  # Iterate over successors
+                newActions = actions + [action]  # Calculate new actions
+                newCost = problem.getCostOfActions(newActions)  # Calculate new cost
+                pQueue.push((successor, newActions), newCost)  # Push successor with new cost to queue
 
-    return []
+    return []  # Return empty list if no solution found
 
 
 def nullHeuristic(state, problem=None):
@@ -181,39 +181,7 @@ def aStarSearch(problem, heuristic=util.manhattanDistance):
     Search the node that has the lowest combined cost and heuristic first.
     """
     "*** YOUR CODE HERE ***"
-    pQueue = util.PriorityQueue()  # Initialize priority queue for A*
-    startState = problem.getStartState()
-
-    # Determine heuristic value for start state
-    startHeuristic = heuristic(startState, problem) if isinstance(startState, tuple) else 0
-    pQueue.push((startState, []), startHeuristic)
-
-    visited = set()  # Track visited states
-    costs = {startState: 0}  # Track the cost to reach each state
-    combinedCosts = {startState: startHeuristic}  # Track the combined cost for each state
-
-    while not pQueue.isEmpty():  # While states remain
-        state, actions = pQueue.pop()  # Dequeue state based on cost + heuristic
-
-        if state in visited:  # Skip visited states
-            continue
-
-        if problem.isGoalState(state):  # Check for goal
-            return actions
-
-        visited.add(state)  # Mark state as visited
-
-        for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
-            newCost = costs[state] + cost
-            nextHeuristic = heuristic(nextState, problem) if isinstance(nextState, tuple) else 0
-            newCombinedCost = newCost + nextHeuristic
-
-            if nextState not in visited and (nextState not in combinedCosts or newCombinedCost < combinedCosts[nextState]):
-                costs[nextState] = newCost
-                combinedCosts[nextState] = newCombinedCost
-                pQueue.push((nextState, actions + [action]), newCombinedCost)
-
-    return []  # Return empty list if no solution
+    util.raiseNotDefined()
 
 
 # Abbreviations
