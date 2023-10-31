@@ -181,38 +181,7 @@ def aStarSearch(problem, heuristic=util.manhattanDistance):
     Search the node that has the lowest combined cost and heuristic first.
     """
     "*** YOUR CODE HERE ***"
-    pQueue = util.PriorityQueue()  # Initialize priority queue for A*
-    startState = problem.getStartState()
-
-    # Determine heuristic value for start state
-    startHeuristic = heuristic(startState, problem) if isinstance(startState, tuple) else 0
-    pQueue.push((startState, []), startHeuristic)
-
-    visited = set()  # Track visited states
-    costs = {startState: 0}  # Track the cost to reach each state
-
-    while not pQueue.isEmpty():  # While states remain
-        state, actions = pQueue.pop()  # Dequeue state based on cost + heuristic
-
-        if state in visited:  # Skip visited states
-            continue
-
-        if problem.isGoalState(state):  # Check for goal
-            return actions
-
-        visited.add(state)  # Mark state as visited
-
-        for nextState, action, cost in problem.getSuccessors(state):  # Iterate successors
-            newCost = costs[state] + cost
-            nextHeuristic = heuristic(nextState, problem) if isinstance(nextState, tuple) else 0
-            newCombinedCost = newCost + nextHeuristic
-
-            # Check if the state is not visited or if the new cost is lower than the previous cost
-            if nextState not in visited and (nextState not in costs or newCost < costs[nextState]):
-                costs[nextState] = newCost
-                pQueue.update((nextState, actions + [action]), newCombinedCost)
-
-    return []  # Return empty list if no solution
+    util.raiseNotDefined()
 
 
 # Abbreviations
